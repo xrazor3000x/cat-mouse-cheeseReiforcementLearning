@@ -1,17 +1,15 @@
 ## Table of Contents
 - [Background](#background)
-- [The *World* and *Cat* player implementations](#world)
-- [The *Mouse* player](#mouse)
-  - [Q-learning implementation](#q-learning)
-- [Reproduce it yourself](#reproduce)
+- [The *World* y *Cat* implementaciones de jugadores](#world)
+- [el *Mouse* jugador](#mouse)
+  - [Implementación de Q-learning](#q-learning)
+- [Uso](#reproduce)
 
 <div id='background'/>
 
 ### Background
 
-Value Functions are state-action pair functions that estimate how good a particular action will be in a given state, or what the return for that action is expected to be.
-
-Q-Learning is an *off-policy* (can update the estimated value functions using hypothetical actions, those which have not actually been tried) algorithm for *temporal difference learning* ( method to estimate value functions). It can be proven that given sufficient training, the Q-learning converges with probability 1 to a close approximation of the action-value function for an arbitrary target policy. Q-Learning learns the optimal policy even when actions are selected according to a more exploratory or even random policy. Q-learning can be implemented as follows:
+Q-Learning es un algoritmo fuera de política (puede actualizar las funciones de valor estimado utilizando acciones hipotéticas, aquellas que en realidad no se han probado) para el aprendizaje de diferencias temporales (método para estimar funciones de valor). Se puede demostrar que, con una formación suficiente, el Q-learning converge con probabilidad 1 a una aproximación cercana de la función de valor de acción para una política objetivo arbitraria. Q-Learning aprende la política óptima incluso cuando las acciones se seleccionan de acuerdo con una política más exploratoria o incluso aleatoria. Q-learning se puede implementar de la siguiente manera:
 
 ```
 Initialize Q(s,a) arbitrarily
@@ -24,31 +22,30 @@ Repeat (for each generation):
 		s = s'
 ```
 
-where:
-- **s**: is the previous state
-- **a**: is the previous action
-- **Q()**: is the Q-learning algorithm
-- **s'**: is the current state
-- **alpha**: is the the learning rate, set generally between 0 and 1. Setting it to 0 means that the Q-values are never updated, thereby nothing is learned. Setting  alpha to a high value such as 0.9 means that learning can occur quickly.
-- **gamma**: is the discount factor, also set between 0 and 1. This models the fact that future rewards are worth less than immediate rewards.
-- **max,**: is the the maximum reward that is attainable in the state following the current one (the reward for taking the optimal action thereafter).
+donde:
 
-The algorithm can be interpreted as:
-
-1. Initialize the Q-values table, Q(s, a).
-2. Observe the current state, s.
-3. Choose an action, a, for that state based on the selection policy.
-3. Take the action, and observe the reward, r, as well as the new state, s'.
-4. Update the Q-value for the state using the observed reward and the maximum reward possible for the next state.
-5. Set the state to the new state, and repeat the process until a terminal state is reached.
+s: es el estado anterior.
+a: es la acción anterior.
+Q(): es el algoritmo Q-learning.
+s': es el estado actual.
+alpha: es la tasa de aprendizaje, generalmente establecida entre 0 y 1. Establecerla en 0 significa que los valores de Q nunca se actualizan, por lo tanto, no se aprende nada. Establecer alpha en un valor alto como 0.9 significa que el aprendizaje puede ocurrir rápidamente.
+gamma: es el factor de descuento, también establecido entre 0 y 1. Esto modela el hecho de que las recompensas futuras valen menos que las recompensas inmediatas.
+máx,: es la recompensa máxima que se puede obtener en el estado siguiente al actual (la recompensa por tomar la acción óptima después de eso).
+El algoritmo se puede interpretar como:
 
 
+1.Inicializar la tabla de valores de Q, Q(s, a).
+2.Observar el estado actual, s.
+3.Elegir una acción, a, para ese estado basándose en la política de selección.
+4.Tomar la acción y observar la recompensa, r, así como el nuevo estado, s'.
+5.Actualizar el valor de Q para el estado utilizando la recompensa observada y la recompensa máxima posible para el próximo estado.
+6.Establecer el estado al nuevo estado y repetir el proceso hasta que se alcance un estado terminal.
 
 <div id='world'/>
 
-### The *World* and *Cat* player implementations
+### The *World* and *Cat* implementaciones de jugadores
 
-The implementations of the discrete 2D world (including agents, cells and other abstractions) as well as the cat and mouse players is performed in the `cellular.py` file. The world is generated from a `.txt`file. In particular, I'm using the `worlds/waco.txt`:
+Las implementaciones del mundo 2D discreto (incluidos agentes, células y otras abstracciones), así como los jugadores del gato y el ratón, se realizan en el archivo "celular.py". El mundo se genera a partir de un archivo `.txt`. En particular, estoy usando el `worlds/waco.txt`:
 
 ```
 (waco world)
@@ -67,7 +64,7 @@ XXXXXXXXXXXXXX
 
 ```
 
-The *Cat* player class inherit from `cellular.Agent` and its implementation is set to follow the *Mouse* player:
+The *Cat* clase de jugador hereda de `cellular.Agent` y su implementación seguirá al *Mouse* jugdor:
 
 ```python
 
@@ -89,7 +86,7 @@ The *Cat* player class inherit from `cellular.Agent` and its implementation is s
             self.cell = best
 
 ```
-The *Cat* player calculates the quadratic distance (`bestDist`)  among its neighbours and moves itself (`self.cell = best`) to that cell.
+The *Cat* La jugadora calcula la distancia cuadrática (`bestDist`) Entre sus vecinas y se mueve (`self.cell = best`) a esa celda.
 
 ```python
 class Cat(cellular.Agent):
@@ -105,13 +102,12 @@ class Cat(cellular.Agent):
                 self.goInDirection(random.randrange(directions))
 
 ```
-Overall, the *Cat* pursues the *Mouse* through the `goTowards` method by calculating the quadratic distance. Whenever it bumps to the wall, it takes a random action.
-
+En general, el *Cat* persigue el *Mouse* a través de `goTowards`método calculando la distancia cuadrática. Cada vez que choca contra la pared, realiza una acción aleatoria.
 <div id='mouse'/>
 
 ### The *Mouse* player
 
-The *Mouse* player contains the following attributes:
+The *Mouse* La jugador contiene los siguientes atributos:
 ```python
 class Mouse(cellular.Agent):
     colour = 'gray'
@@ -126,10 +122,10 @@ class Mouse(cellular.Agent):
         self.lastAction = None
 
 ```
-The `eaten` and `fed` attributes store the performance of the player while the `lastState` and `lastAction` ones help the *Mouse* player store information about its previous states (later used for learning).
+los `eaten` y `fed` Los atributos almacenan el rendimiento del jugador mientras que el `lastState` y `lastAction` les ayudan a el *Mouse* El reproductor almacena información sobre sus estados anteriores (luego se usa para aprender).
 
-The `ai` attribute stores the Q-learning implementation which is initialized with the following parameters:
-- **directions**: There're different possible directions/actions implemented at the `getPointInDirection` method of the *World* class:
+la `ai` El atributo almacena la implementación de Q-learning que se inicializa con los siguientes parámetros:
+- **directions**: Hay diferentes direcciones/acciones posibles implementadas en el `getPointInDirection` Metodo de *World* class:
 
 ```python
     def getPointInDirection(self, x, y, dir):
@@ -148,12 +144,12 @@ The `ai` attribute stores the Q-learning implementation which is initialized wit
 
 
 ```
-In general, this implementaiton will be used in **8 directions**, thererby `(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)]`.
-- **alpha**: which is the q-learning discount constant, set to `0.1`.
-- **gamma**: the q-learning discount factor, set to `0.9`.
-- **epsilon**: an exploration constant to randomize decisions, set to `0.1`.
+En general, esta implementación se utilizará en **8 direcciones**, por lo que `(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)]`.
+- **alpha**: cuál es la constante de descuento de q-learning, establecida en `0.1`.
+- **gamma**: el factor de descuento de q-learning, establecido en `0.9`.
+- **epsilon**: una constante de exploración para aleatorizar las decisiones, establecida en `0.1`.
 
-The *Mouse* player calculates the next state using the `calcState()` method implemented as follows:
+El *Mouse* El jugador calcula el siguiente estado usando el`calcState()` método implementado de la siguiente manera:
 ```python
 
     def calcState(self):
@@ -171,20 +167,20 @@ The *Mouse* player calculates the next state using the `calcState()` method impl
                       for i,j in lookcells])
 
 ```
-This, in a nutshell, returns a tupple of the values of the cells surrounding the current *Mouse* as follows:
-- `3`: if the *Cat* is in that cell
-- `2`: if the *Cheese* is in that cell
-- `1`: if the that cell is a wall
-- `0`: otherwise
+Esto, en pocas palabras, devuelve una tupla de los valores de las celdas que rodean el valor actual *Mouse* como sigue:
+- `3`: Si el *Cat* esta en esa celda
+- `2`: Si el *Cheese* esta en esa celda
+- `1`: Si la celda es una pared
+- `0`: otros
 
-The lookup is performed according to the `lookdist` variable that in this implementation uses a value of `2` (in other words, the mouse can "see" up to two cells ahead in every direction).
+La búsqueda se realiza de acuerdo con el `lookdist`variable que en esta implementación usa un valor de `2` (en otras palabras, el mouse puede "ver" hasta dos celdas adelante en cada dirección).
 
-To finish up reviewing the *Mouse* implementation, let's look at how the Q-learning is implemented:
+Para terminar repasando el *Mouse* implementación, veamos cómo se implementa Q-learning:
 
 <div id='q-learning'/>
 
-#### Q-learning implementation
-Let's look at the `update` method of the *Mouse* player:
+##Implementación de Q-learning
+Miremos el `update` método de el *Mouse* jugador:
 
 ```python
     def update(self):
@@ -221,36 +217,43 @@ Let's look at the `update` method of the *Mouse* player:
         self.goInDirection(action)
 ```
 
-Code has been commented so that its understanding is simplified. The implementation matches the pseudo-code presented in the [Background](#background) section above (note that for the sake of the implementation, the actions in the `Python` implementation have been reordered). 
+Se ha comentado el código para simplificar su comprensión. La implementación coincide con el pseudocódigo presentado en el [Background](#background) sección anterior (tenga en cuenta que por motivos de implementación, las acciones en la implementación de "Python" se han reordenado).
 
-Rewards are given with these terms:
-- `-100`: if the *Cat* player eats the *Mouse*
-- `50`: if the *Mouse* player eats the cheese
-- `-1`: otherwise
+Las recompensas se otorgan con estos términos:
+- `-100`: Si el *Cat* jugador come al *Mouse*
+- `50`: Si el *Mouse* jugador come al cheese
+- `-1`: otros
 
-The learning algorithm records every state/action/reward combination in a dictionary containing a (state, action) tuple in the key and the reward as the value of each member.
+El algoritmo de aprendizaje registra cada combinación de estado/acción/recompensa en un diccionario que contiene una tupla (estado, acción) en la clave y la recompensa como el valor de cada miembro.
 
-Note that the amount of elements saved in the dictionary for this simplified 2D environment is considerable after a few generations. To get some insight about this fact, consider the following numbers:
-- After **10 000** generations:
-  	- 2430 elements (state/action/reward combinations) learned
-  	- Bytes: 196888 (192 KB)
-- After **100 000** generations:
-	- 5631 elements (state/action/reward combinations) learned
+Tenga en cuenta que la cantidad de elementos guardados en el diccionario para este entorno 2D simplificado es considerable después de algunas generaciones. Para obtener una idea de este hecho, considere los siguientes número
+-Después de **10 000** generaciones:
+	  - 2430 elementos (combinaciones de estado/acción/recompensa) aprendidos
+	  - Bytes: 196888 (192 KB)
+- Después de **100 000** generaciones:
+	- 5631 elementos (combinaciones de estado/acción/recompensa) aprendidos
 	- Bytes: 786712 (768 KB)
-- After **600 000** generations:
-	- 9514 elements (state/action/reward combinations) learned
+- Después de **600 000** generaciones:
+	- 9514 elementos (combinaciones de estado/acción/recompensa) aprendidos
 	- Bytes: 786712 (768 KB)
-- After **1 000 000** generations:
-	- 10440 elements (state/action/reward combinations) learned
+- Después de **1.000.000** de generaciones:
+	- 10440 elementos (combinaciones de estado/acción/recompensa) aprendidos
 	- Bytes: 786712 (768 KB)
 
-Given the results showed above, one can observe that for some reason, Python `sys.getsizeof` function seems to be upper bounded by 786712 (768 KB). We can't provide accurate data but given the results showed, one can conclude that the elements generated after **1 million generations should require something close to 10 MB in memory** for this 2D simplified world.
+Dados los resultados mostrados anteriormente, se puede observar que, por alguna razón, la función `sys.getsizeof` de Python parece tener un límite superior de 786712 (768 KB). No podemos proporcionar datos precisos, pero dados los resultados mostrados, se puede concluir que los elementos generados después de **1 millón de generaciones deberían requerir algo cercano a 10 MB de memoria** para este mundo simplificado en 2D.
 
 <div id='results'/>
 
 
 <div id='reproduce'/>
 
-### Reproduce it yourself
+### Uso
 
 python egoMouseLook.py
+Linea 147 egoMouseLook 
+endAge = world.age + "veces que se entrenara al iniciar"
+cambiable de forma de aprendizaje
+egoMouseLook 
+linea 11 y 13
+qlearn forma estandar de seleccion de movimientos
+qlearn mod ramdom minQ = min(q); mag = max(abs(minQ), abs(maxQ)) se agrega este algoritmo para crear El "ruido aleatorio a los valores Q" se refiere a la introducción de variabilidad o perturbaciones aleatorias en los valores Q almacenados en la tabla Q de un algoritmo de aprendizaje por refuerzo, como el Q-Learning. Este ruido tiene el propósito de fomentar la exploración del espacio de acciones y evitar que el agente se quede atrapado en un conjunto de acciones subóptimas.
