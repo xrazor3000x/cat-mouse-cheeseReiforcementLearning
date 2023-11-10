@@ -254,21 +254,9 @@ Given the results showed above, one can observe that for some reason, Python `sy
 
 <div id='results'/>
 
-### Results
-Below we present a *mouse player* after **15 000 generations** of reinforcement learning:
-
-![](../img/rl_qlearning_1.gif)
-
-and now we present the same player after **150 000 generations** of reinforcement learning:
-
-![](../img/rl_qlearning_2.gif)
 
 <div id='reproduce'/>
 
 ### Reproduce it yourself
 
-```bash
-git clone https://github.com/vmayoral/basic_reinforcement_learning
-cd basic_reinforcement_learning
-python tutorial1/egoMouseLook.py
-```
+python egoMouseLook.py
