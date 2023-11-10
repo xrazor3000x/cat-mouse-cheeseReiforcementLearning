@@ -1,8 +1,3 @@
-Basic Reinforcement Learning Tutorial 1: Q-learning
-===================================================
-
-This tutorial covers the basics of Q-learning using the cat-mouse-cheese example. 
-
 ## Table of Contents
 - [Background](#background)
 - [The *World* and *Cat* player implementations](#world)
