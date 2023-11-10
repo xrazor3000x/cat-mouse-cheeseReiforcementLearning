@@ -8,7 +8,6 @@ This tutorial covers the basics of Q-learning using the cat-mouse-cheese example
 - [The *World* and *Cat* player implementations](#world)
 - [The *Mouse* player](#mouse)
   - [Q-learning implementation](#q-learning)
-- [Results](#results)
 - [Reproduce it yourself](#reproduce)
 
 <div id='background'/>
